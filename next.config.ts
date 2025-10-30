@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
+    appDir: true, 
     allowedDevOrigins: [
       'https://6000-firebase-studio-1757623625821.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
       'http://6000-firebase-studio-1757623625821.cluster-cbeiita7rbe7iuwhvjs5zww2i4.cloudworkstations.dev',
