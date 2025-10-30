@@ -1,0 +1,25 @@
+# Settings to manage and configure a Firebase App Hosting backend.
+# https://firebase.google.com/docs/app-hosting/configure
+
+# Specify the build commands and output directory for your application.
+build:
+  # The command to install dependencies (e.g., npm install, yarn install).
+  # If omitted, Firebase App Hosting will try to auto-detect.
+  # installCommand: npm install
+
+  # The command to build your application (e.g., npm run build, next build).
+  # This is crucial for Next.js apps.
+  buildCommand: npm run build
+
+  # The directory where your application's static assets are output after building.
+  # For Next.js, this is usually ".next"
+  outputDirectory: .next
+
+# Configure the runtime settings for your application.
+runConfig:
+  # The command to start your application after it's been built.
+  # For Next.js, this is typically "npm start" (which uses "next start").
+  startCommand: npm start
+  # Increase this value if you'd like to automatically spin up
+  # more instances in response to increased traffic.
+  maxInstances: 1
