@@ -1,0 +1,52 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-image",
+      "description": "A student studying with books and a laptop.",
+      "imageUrl": "https://picsum.photos/seed/studying/1200/800",
+      "imageHint": "student studying"
+    },
+    {
+      "id": "flashcard-feature",
+      "description": "Digital flashcards on a screen.",
+      "imageUrl": "https://picsum.photos/seed/flashcards/400/300",
+      "imageHint": "digital flashcards"
+    },
+    {
+      "id": "quiz-feature",
+      "description": "A multiple choice quiz on a tablet.",
+      "imageUrl": "https://picsum.photos/seed/quiz/400/300",
+      "imageHint": "online quiz"
+    },
+    {
+      "id": "schedule-feature",
+      "description": "A calendar with a study schedule.",
+      "imageUrl": "https://picsum.photos/seed/schedule/400/300",
+      "imageHint": "study calendar"
+    },
+    {
+      "id": "articles-notes-feature",
+      "description": "A person writing notes in a notebook with a pen.",
+      "imageUrl": "https://picsum.photos/seed/notes/400/300",
+      "imageHint": "writing notes"
+    },
+    {
+      "id": "article-feature",
+      "description": "An AI generated article on a screen.",
+      "imageUrl": "https://picsum.photos/seed/article/400/300",
+      "imageHint": "generated article"
+    },
+    {
+      "id": "writer-feature",
+      "description": "An AI bot icon representing a writing assistant.",
+      "imageUrl": "https://picsum.photos/seed/writer/400/300",
+      "imageHint": "writing assistant"
+    },
+    {
+      "id": "library-feature",
+      "description": "A digital library bookshelf.",
+      "imageUrl": "https://picsum.photos/seed/library/400/300",
+      "imageHint": "digital library"
+    }
+  ]
+}
