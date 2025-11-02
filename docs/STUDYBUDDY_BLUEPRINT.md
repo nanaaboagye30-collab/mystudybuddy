@@ -54,6 +54,7 @@ Firebase powers the user management and data persistence layers.
     -   The `src/components/auth-provider.tsx` component is a client-side wrapper that listens for changes in the authentication state (`onAuthStateChanged`). It protects routes by redirecting unauthenticated users to the login page and logged-in users away from the login page.
     -   The `useAuth` hook provides easy access to the current user's state throughout the application.
 
+<<<<<<< HEAD
 ## 6. Core Feature Implementation: The "A-Level" Standard
 
 All AI-driven features operate under a unified "A-Level" standard, ensuring the generated content is not just accurate but also analytical, critical, and structured for optimal learning.
@@ -112,6 +113,23 @@ This feature functions as an AI Teaching Assistant, evaluating a student's notes
     5.  **Clarity & Synthesis**: Ensures notes transform data into understanding.
 
 -   **Output**: The AI delivers a structured evaluation, including a score, a list of strengths/weaknesses, and actionable advice for improvement, simulating feedback from a university TA.
+=======
+## 6. Core Feature Implementation (AI Flows)
+
+The AI functionality is modularized into "flows" using Genkit, located in the `src/ai/flows/` directory.
+
+-   **Genkit Initialization**: A global `ai` instance is created in `src/ai/genkit.ts`, configured to use the Gemini model.
+-   **AI Flow Structure**: Each AI feature (e.g., `generate-study-notes.ts`, `generate-text.ts`) follows a standard pattern:
+    1.  It is marked with `'use server';` to be used in Server Actions.
+    2.  It defines input and output schemas using `zod` for type safety and validation.
+    3.  It defines an `ai.definePrompt` object, which contains the detailed instructions given to the AI model. This is where the "Harvard-level" analysis standard is enforced.
+    4.  It defines an `ai.defineFlow` that wraps the prompt call.
+    5.  It exports a simple async function that the UI can call.
+-   **UI to AI Interaction**:
+    -   Each feature page (e.g., `src/app/(app)/writer/page.tsx`) has a corresponding `actions.ts` file.
+    -   The UI component calls a server action from its `actions.ts` file.
+    -   The action function then calls the relevant AI flow, handles any errors, and returns the result to the UI.
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 
 ## 7. Data Persistence (Firestore)
 
@@ -123,4 +141,8 @@ User-generated content like saved notes and planner goals are stored in Firestor
 -   **Server-Side Operations**: These service functions use the `firebase-admin` SDK, ensuring that all database interactions happen securely on the server, not on the client.
 -   **Data Fetching**: Pages like "My Library" (`src/app/(app)/library/page.tsx`) are client components that fetch their initial data by calling these server-side service functions within a `useEffect` hook.
 
+<<<<<<< HEAD
 This blueprint outlines how a modern, full-stack application can be built by combining the power of a Next.js frontend, a robust component library like ShadCN, serverless functions via AI flows, and a managed backend with Firebase. The core differentiator is the "A-Level" standard embedded into its AI features, transforming it from a simple tool into an analytical learning partner.
+=======
+This blueprint outlines how a modern, full-stack application can be built by combining the power of a Next.js frontend, a robust component library like ShadCN, serverless functions via AI flows, and a managed backend with Firebase.
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0

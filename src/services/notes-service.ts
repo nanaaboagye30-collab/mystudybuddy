@@ -3,13 +3,20 @@
 import { db } from '@/lib/firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 
+<<<<<<< HEAD
 export type SavedNoteType = 'study-notes' | 'article-analysis' | 'flashcards' | 'quiz';
 
+=======
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 export type SavedNote = {
     id: string;
     userId: string;
     topic: string;
+<<<<<<< HEAD
     type: SavedNoteType;
+=======
+    type: 'study-notes' | 'article-analysis';
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
     content: any;
     createdAt: Date;
 };
@@ -23,7 +30,11 @@ function getNotesCollection() {
 }
 
 
+<<<<<<< HEAD
 export async function saveNote(userId: string, topic: string, type: SavedNoteType, content: any): Promise<string> {
+=======
+export async function saveNote(userId: string, topic: string, type: 'study-notes' | 'article-analysis', content: any): Promise<string> {
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
     const notesCollection = getNotesCollection();
     if (!notesCollection) {
         console.warn('Firebase Admin SDK is not initialized. Skipping save operation. Please configure server-side environment variables.');

@@ -1,6 +1,9 @@
+<<<<<<< HEAD
 import { config } from 'dotenv';
 config();
 
+=======
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 import * as admin from 'firebase-admin';
 import type { Firestore } from 'firebase-admin/firestore';
 import type { Auth } from 'firebase-admin/auth';

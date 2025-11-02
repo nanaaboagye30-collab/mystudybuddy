@@ -5,7 +5,11 @@
 import {z} from 'genkit';
 
 export const GenerateStudyNotesOutputSchema = z.object({
+<<<<<<< HEAD
   studyNotes: z.string().describe("The generated study notes in markdown format. It MUST contain '## BACKGROUND' and '## KEY POINTS' sections."),
+=======
+  studyNotes: z.string().describe("The generated study notes in markdown format."),
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 });
 
 export type GenerateStudyNotesOutput = z.infer<typeof GenerateStudyNotesOutputSchema>;
@@ -17,10 +21,17 @@ export const GenerateTransformedNotesInputSchema = z.object({
 });
 export type GenerateTransformedNotesInput = z.infer<typeof GenerateTransformedNotesInputSchema>;
 
+<<<<<<< HEAD
 export const GenerateSummaryOutputSchema = z.object({
     transformedNotes: z.string().describe('The notes transformed into a structured one-page summary format.')
 });
 export type GenerateSummaryOutput = z.infer<typeof GenerateSummaryOutputSchema>;
+=======
+export const GenerateTransformedNotesOutputSchema = z.object({
+    transformedNotes: z.string().describe('The notes in the requested new format.')
+});
+export type GenerateTransformedNotesOutput = z.infer<typeof GenerateTransformedNotesOutputSchema>;
+>>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 
 export const GenerateFlashcardsFromNotesInputSchema = z.object({
     notes: z.string().describe('The detailed study notes to generate flashcards from.'),
