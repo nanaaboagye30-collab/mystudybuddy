@@ -30,7 +30,16 @@ export function FlashcardGenerator({ onFlashcardsGenerated }: FlashcardGenerator
     }
     setIsLoading(true);
     try {
-      const result = await handleGenerateFlashcards(text);
+      const result = await handleGenerateFlashcards({ text: text });
+
+      // --- CORRECTION START ---
+      // Check if 'result' is an error object
+      if ('error' in result) {
+        throw new Error(result.error); // Re-throw the error message
+      }
+
+      // If we get here, TypeScript now knows 'result' MUST be the success type
+      // { flashcards: Flashcard[]; }
       if (result.flashcards && result.flashcards.length > 0) {
         onFlashcardsGenerated(result);
         toast({
@@ -38,8 +47,10 @@ export function FlashcardGenerator({ onFlashcardsGenerated }: FlashcardGenerator
           description: `Generated ${result.flashcards.length} flashcards.`,
         });
       } else {
+        // This handles cases where no error occurred but no flashcards were returned
         throw new Error('No flashcards were generated. Try different text.');
       }
+      // --- CORRECTION END ---
     } catch (error) {
       console.error(error);
       toast({

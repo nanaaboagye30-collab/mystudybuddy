@@ -9,10 +9,6 @@ import { auth } from '@/lib/firebase';
 import { BrainCircuit, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
-<<<<<<< HEAD
-=======
-import { handleSignInWithEmail, handleSignInWithGoogle } from './actions';
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 
 export default function LoginPage() {
     const { toast } = useToast();

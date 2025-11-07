@@ -9,11 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { handleGenerateQuiz } from '@/app/(app)/quiz/actions';
-import type { GenerateQuizOutput } from '@/ai/flows/generate-quiz-from-uploaded-text';
+// IMPORTANT: Import GenerateQuizInput as it will now be part of the prop signature
+import type { GenerateQuizOutput, GenerateQuizSuccessOutput, GenerateQuizInput } from '@/ai/flows/generate-quiz-from-uploaded-text';
 import { Loader2, Sparkles } from 'lucide-react';
 
 type QuizGeneratorProps = {
-  onQuizGenerated: (data: GenerateQuizOutput) => void;
+  // --- CRITICAL CORRECTION HERE ---
+  // onQuizGenerated now expects two arguments: the successful quiz data AND the input data
+  onQuizGenerated: (data: GenerateQuizSuccessOutput, inputData: GenerateQuizInput) => void;
 };
 
 export function QuizGenerator({ onQuizGenerated }: QuizGeneratorProps) {
@@ -27,7 +30,10 @@ export function QuizGenerator({ onQuizGenerated }: QuizGeneratorProps) {
     const difficulty = formData.get('difficulty') as 'easy' | 'medium' | 'hard';
     const numberOfQuestions = Number(formData.get('numberOfQuestions'));
 
-    if (text.trim().length < 100) {
+    // Create the input object to pass both to handleGenerateQuiz and later to onQuizGenerated
+    const currentInput: GenerateQuizInput = { text, difficulty, numberOfQuestions };
+
+    if (currentInput.text.trim().length < 100) {
       toast({
         title: 'Text too short',
         description: 'Please enter at least 100 characters to generate a quiz.',
@@ -35,19 +41,24 @@ export function QuizGenerator({ onQuizGenerated }: QuizGeneratorProps) {
       });
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
-      const result = await handleGenerateQuiz({ text, difficulty, numberOfQuestions });
-      if (result.quiz && result.quiz.length > 0) {
-        onQuizGenerated(result);
+      const result: GenerateQuizOutput = await handleGenerateQuiz(currentInput); // Pass currentInput
+      if ('quiz' in result && result.quiz && result.quiz.length > 0) {
+        // --- CRITICAL CORRECTION HERE ---
+        // Call onQuizGenerated with BOTH the successful quiz data (result) and the input data (currentInput)
+        onQuizGenerated(result, currentInput);
         toast({
           title: 'Quiz Generated!',
           description: `Your ${result.quiz.length}-question quiz is ready.`,
         });
       } else {
-        throw new Error('No quiz questions were generated. Try different text or settings.');
+        // Handle the error case or no questions generated
+        // We can safely assume it's an error output if 'quiz' property is missing or empty
+        const errorMessage = (result as { error?: string }).error || 'No quiz questions were generated. Try different text or settings.';
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error(error);

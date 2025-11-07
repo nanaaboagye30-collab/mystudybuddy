@@ -4,7 +4,10 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { ClientGoal } from "@/services/goals-service";
-import { handleGenerateDailyPlan, type GenerateDailyStudyPlanOutput } from "@/app/(app)/schedule/daily-actions";
+// --- CORRECTED IMPORTS FOR GenerateDailyStudyPlanOutput ---
+import { handleGenerateDailyPlan } from "@/app/(app)/schedule/daily-actions";
+import { type GenerateDailyStudyPlanOutput } from "@/ai/flows/generate-daily-study-plan";
+// --- END CORRECTED IMPORTS ---
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";

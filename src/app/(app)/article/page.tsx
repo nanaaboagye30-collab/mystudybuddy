@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 'use client';
 
 import { useState } from 'react';
@@ -55,7 +52,6 @@ export default function ArticlePage() {
 
         try {
             const result = await handleAnalyzeArticle({ text: sourceText });
-<<<<<<< HEAD
             if ('error' in result) {
                  toast({
                     title: 'Analysis Failed',
@@ -74,18 +70,6 @@ export default function ArticlePage() {
             toast({
                 title: 'An Unexpected Error Occurred',
                 description: 'An unknown error occurred while analyzing the article.',
-=======
-            setAnalysisResult(result);
-            toast({
-                title: 'Analysis Complete',
-                description: 'Extracted vocabulary and key phrases from the article.'
-            });
-        } catch (error) {
-            console.error(error);
-            toast({
-                title: 'Analysis Failed',
-                description: error instanceof Error ? error.message : 'An unknown error occurred.',
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
                 variant: 'destructive',
             });
         } finally {
@@ -99,7 +83,6 @@ export default function ArticlePage() {
         if (!analysisResult || !user) return;
 
         setIsSaved(true); // Optimistically set as saved
-<<<<<<< HEAD
         const result = await handleSaveArticle(user.uid, topic || "Untitled Analysis", analysisResult);
         
         if (result.success) {
@@ -111,19 +94,6 @@ export default function ArticlePage() {
             toast({
                 title: 'Save Failed',
                 description: result.error,
-=======
-        try {
-            await handleSaveArticle(user.uid, topic || "Untitled Analysis", analysisResult);
-            toast({
-                title: 'Analysis Saved!',
-                description: 'You can now find your saved analysis in My Library.',
-            });
-        } catch (error) {
-            console.error('Failed to save article:', error);
-            toast({
-                title: 'Save Failed',
-                description: 'Could not save the analysis to your library.',
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
                 variant: 'destructive',
             });
             setIsSaved(false); // Revert save state on error

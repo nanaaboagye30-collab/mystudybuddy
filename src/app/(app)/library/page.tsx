@@ -1,15 +1,8 @@
-<<<<<<< HEAD
 
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Library, Loader2, FileText, Newspaper, FolderPlus, Folder, ChevronRight, Home, PlusCircle, Upload, Save, X, FileQuestion } from 'lucide-react';
-=======
-'use client';
-
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Library, Loader2, FileText, Newspaper, FolderPlus, Folder, ChevronRight, Home, PlusCircle, Upload, Save, X } from 'lucide-react';
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 import { useAuth } from '@/hooks/use-auth';
 import { getNotesForUser, SavedNote } from '@/services/notes-service';
 import { useEffect, useState, useRef } from 'react';
@@ -27,10 +20,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
-<<<<<<< HEAD
-=======
-import Link from 'next/link';
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 
 type ClientFolder = {
     name: string;
@@ -39,7 +28,6 @@ type ClientFolder = {
 
 const NoteCard = ({ note }: { note: SavedNote }) => {
     
-<<<<<<< HEAD
     const getIcon = () => {
         switch (note.type) {
             case 'study-notes': return <FileText className="h-5 w-5" />;
@@ -60,8 +48,6 @@ const NoteCard = ({ note }: { note: SavedNote }) => {
         }
     }
 
-=======
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
     const convertMarkdownToHTML = (text: string) => {
         let html = text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -82,7 +68,6 @@ const NoteCard = ({ note }: { note: SavedNote }) => {
         
         return html;
     };
-<<<<<<< HEAD
 
     const renderContent = () => {
         switch(note.type) {
@@ -165,8 +150,6 @@ const NoteCard = ({ note }: { note: SavedNote }) => {
                 return <p>Unsupported note type.</p>;
         }
     };
-=======
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
     
     return (
         <Card>
@@ -174,11 +157,7 @@ const NoteCard = ({ note }: { note: SavedNote }) => {
                 <div className="flex items-start justify-between">
                     <div>
                         <CardTitle className="font-headline flex items-center gap-2">
-<<<<<<< HEAD
                              {getIcon()}
-=======
-                             {note.type === 'article-analysis' ? <Newspaper className="h-5 w-5" /> : <FileText className="h-5 w-5" />}
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
                             {note.topic}
                         </CardTitle>
                         <CardDescription>
@@ -186,55 +165,13 @@ const NoteCard = ({ note }: { note: SavedNote }) => {
                         </CardDescription>
                     </div>
                     <Badge variant={note.type === 'article-analysis' ? 'secondary' : 'default'}>
-<<<<<<< HEAD
                         {getBadgeText()}
-=======
-                        {note.type === 'article-analysis' ? 'Article Analysis' : 'Study Notes'}
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
                     </Badge>
                 </div>
             </CardHeader>
             <CardContent>
                  <Accordion type="single" collapsible className="w-full">
-<<<<<<< HEAD
                     {renderContent()}
-=======
-                    {note.type === 'study-notes' && (
-                        <>
-                            <AccordionItem value="study-notes">
-                                <AccordionTrigger>Study Notes</AccordionTrigger>
-                                <AccordionContent>
-                                    <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: convertMarkdownToHTML(note.content.studyNotes) }} />
-                                </AccordionContent>
-                            </AccordionItem>
-                             <AccordionItem value="summary">
-                                <AccordionTrigger>Summary</AccordionTrigger>
-                                <AccordionContent>
-                                     <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: convertMarkdownToHTML(note.content.summary) }} />
-                                </AccordionContent>
-                            </AccordionItem>
-                        </>
-                    )}
-                    {note.type === 'article-analysis' && (
-                         <AccordionItem value="vocab-phrases">
-                            <AccordionTrigger className="text-lg font-semibold">Vocabulary &amp; Phrases</AccordionTrigger>
-                            <AccordionContent>
-                                <ul className="space-y-4">
-                                    {note.content.vocabularyAndPhrases.map((item: any, index: number) => (
-                                        <li key={index} className="flex flex-col gap-1">
-                                            <p>
-                                                <strong className="font-medium">{item.term}</strong>
-                                                <span className="text-muted-foreground text-sm ml-2">({item.partOfSpeech})</span>
-                                            </p>
-                                            <p className="text-sm pl-2">{item.definition}</p>
-                                            <p className="text-sm pl-2 text-muted-foreground italic">e.g., "{item.example}"</p>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </AccordionContent>
-                        </AccordionItem>
-                    )}
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
                 </Accordion>
             </CardContent>
         </Card>
@@ -502,11 +439,7 @@ export default function LibraryPage() {
                             
                             {currentNotes.length > 0 && (
                                 <div className="space-y-4">
-<<<<<<< HEAD
                                    <h3 className="text-lg font-semibold mb-2">My Saved Items</h3>
-=======
-                                   <h3 className="text-lg font-semibold mb-2">My Saved Notes</h3>
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
                                    {currentNotes.map(note => <NoteCard key={note.id} note={note} />)}
                                 </div>
                             )}

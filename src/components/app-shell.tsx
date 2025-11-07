@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 
-=======
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 'use client';
 
 import {
@@ -16,11 +13,7 @@ import {
   SidebarFooter,
   SidebarInset,
 } from '@/components/ui/sidebar';
-<<<<<<< HEAD
 import { BrainCircuit, LayoutDashboard, Settings, FileText, FileQuestion, BookOpen, CalendarDays, LogOut, ScanText, PenSquare, Library } from 'lucide-react';
-=======
-import { BrainCircuit, CalendarDays, Copy, FileQuestion, LayoutDashboard, PenLine, Settings, Newspaper, Bot, Library, LogOut } from 'lucide-react';
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -33,21 +26,12 @@ import { useRouter } from 'next/navigation';
 
 const navItems = [
   { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-<<<<<<< HEAD
   { href: '/study-material', icon: BookOpen, label: 'Study Material' },
   { href: '/flashcards', icon: FileText, label: 'Flashcards' },
   { href: '/quiz', icon: FileQuestion, label: 'Quiz' },
   { href: '/schedule', icon: CalendarDays, label: 'Study Planner' },
   { href: '/article', icon: ScanText, label: 'Article Analyzer' },
   { href: '/writer', icon: PenSquare, label: 'AI Writer' },
-=======
-  { href: '/study-material', icon: PenLine, label: 'Study Material' },
-  { href: '/article', icon: Newspaper, label: 'Article' },
-  { href: '/writer', icon: Bot, label: 'Writer' },
-  { href: '/flashcards', icon: Copy, label: 'Flashcards' },
-  { href: '/quiz', icon: FileQuestion, label: 'Quizzes' },
-  { href: '/schedule', icon: CalendarDays, label: 'Schedule' },
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
   { href: '/library', icon: Library, label: 'My Library' },
 ];
 

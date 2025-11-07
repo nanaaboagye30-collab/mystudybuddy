@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
-import { handleGenerateSchedule, type GenerateStudyScheduleOutput } from '@/app/(app)/schedule/actions';
+// --- CRITICAL CORRECTION: Changed handleGenerateSchedule to handleGenerateStudySchedule ---
+import { handleGenerateStudySchedule, type GenerateStudyScheduleOutput } from '@/app/(app)/schedule/actions';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarIcon, Loader2, Sparkles, ListChecks } from 'lucide-react';
@@ -33,7 +34,7 @@ export function WeeklyPlanner({ initialGoals = [] }: WeeklyPlannerProps) {
     const [generatedSchedule, setGeneratedSchedule] = useState<GenerateStudyScheduleOutput | null>(null);
 
     useEffect(() => {
-        const details = initialGoals.length > 0 
+        const details = initialGoals.length > 0
             ? initialGoals.map(g => ({
                 id: g.id,
                 goal: g.courseName,
@@ -52,7 +53,7 @@ export function WeeklyPlanner({ initialGoals = [] }: WeeklyPlannerProps) {
     const handleAvailabilityChange = (id: string | number, availability: string) => {
         setGoalDetails(prev => prev.map(d => d.id === id ? { ...d, availability: availability } : d));
     };
-    
+
     const handleGoalChange = (id: string | number, goal: string) => {
         setGoalDetails(prev => prev.map(d => d.id === id ? { ...d, goal } : d));
     }
@@ -65,7 +66,13 @@ export function WeeklyPlanner({ initialGoals = [] }: WeeklyPlannerProps) {
         const latestExamDate = goalDetails.reduce((latest, d) => {
             return (d.examDate && (!latest || d.examDate > latest)) ? d.examDate : latest;
         }, undefined as Date | undefined);
-        const allAvailabilities = goalDetails.map(d => `${d.goal}: ${d.availability}`).filter(d => d.goal && d.availability).join('; ');
+
+        // --- CRITICAL CORRECTION HERE ---
+        // Filter the GoalDetail objects first, then map them to strings.
+        const allAvailabilities = goalDetails
+            .filter(d => d.goal && d.availability)
+            .map(d => `${d.goal}: ${d.availability}`)
+            .join('; ');
 
         if (!latestExamDate) {
             toast({ title: 'Please select at least one exam date.', variant: 'destructive' });
@@ -79,21 +86,24 @@ export function WeeklyPlanner({ initialGoals = [] }: WeeklyPlannerProps) {
             toast({ title: 'Please enter your availability for all goals.', variant: 'destructive' });
             return;
         }
-        
+
         setIsLoading(true);
         setGeneratedSchedule(null);
 
         try {
-          const result = await handleGenerateSchedule({ 
-            examDates: format(latestExamDate, 'yyyy-MM-dd'), 
-            subjects: allSubjects, 
-            availability: allAvailabilities 
+          // --- CRITICAL CORRECTION: Called the correctly named function ---
+          const result = await handleGenerateStudySchedule({
+            examDates: format(latestExamDate, 'yyyy-MM-dd'),
+            subjects: allSubjects,
+            availability: allAvailabilities
           });
-          if (result.schedule) {
+          // Improved check for schedule presence and error handling
+          if (result && 'schedule' in result && result.schedule) {
             setGeneratedSchedule(result);
             toast({ title: 'Monthly Schedule Generated!', description: 'Your high-level plan is ready.' });
           } else {
-            throw new Error('AI failed to generate a schedule.');
+            // If 'result' exists but doesn't have 'schedule', check for an 'error' property
+            throw new Error((result as { error?: string })?.error || 'AI failed to generate a schedule.');
           }
         } catch (error) {
           console.error(error);
@@ -106,7 +116,7 @@ export function WeeklyPlanner({ initialGoals = [] }: WeeklyPlannerProps) {
           setIsLoading(false);
         }
     };
-    
+
     const isFromGoals = initialGoals.length > 0;
 
     return (
@@ -201,7 +211,7 @@ export function WeeklyPlanner({ initialGoals = [] }: WeeklyPlannerProps) {
                     </form>
                 </CardContent>
             </Card>
-      
+
             {(isLoading || generatedSchedule) && (
                  <Card>
                     <CardHeader>

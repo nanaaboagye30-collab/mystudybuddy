@@ -1,21 +1,33 @@
-
+// src/app/(app)/schedule/actions.ts
 'use server';
 
+// Imports for Generate Study Schedule
 import {
   generateStudySchedule,
   type GenerateStudyScheduleInput,
-  type GenerateStudyScheduleOutput,
+  type GenerateStudyScheduleOutput, // This type is imported here
 } from '@/ai/flows/generate-study-schedule';
 
-<<<<<<< HEAD
+// --- START OF REQUIRED CORRECTION ---
+// We need to explicitly re-export GenerateStudyScheduleOutput from this file
+// so that other modules (like schedule-generator.tsx) can import it from here.
+export { type GenerateStudyScheduleOutput };
+// --- END OF REQUIRED CORRECTION ---
+
+
+// Imports for Generate Daily Study Plan
 import {
   generateDailyStudyPlan,
   type GenerateDailyStudyPlanInput,
   type GenerateDailyStudyPlanOutput,
 } from '@/ai/flows/generate-daily-study-plan';
 
+// Imports for Goal Management
 import { getGoalsForUser, saveGoals, type ClientGoal } from '@/services/goals-service';
 
+// --- ENSURE 'export' IS PRESENT FOR ALL FUNCTIONS ---
+
+// Server action to generate a high-level study schedule
 export async function handleGenerateStudySchedule(
   input: GenerateStudyScheduleInput
 ): Promise<GenerateStudyScheduleOutput | { error: string }> {
@@ -24,7 +36,11 @@ export async function handleGenerateStudySchedule(
     if (!result) {
       return { error: 'AI failed to generate a study schedule.' };
     }
-    return result;
+    // Type narrowing: Ensure 'result' matches the success output if there's no error field
+    if ('error' in result) {
+      return result; // It's already an error object
+    }
+    return result; // It's a GenerateStudyScheduleOutput
   } catch (error) {
     console.error('Error generating study schedule:', error);
     let errorMessage = 'An unknown error occurred while generating the schedule.';
@@ -39,7 +55,7 @@ export async function handleGenerateStudySchedule(
   }
 }
 
-
+// Server action to generate a detailed daily study plan
 export async function handleGenerateDailyStudyPlan(
   input: GenerateDailyStudyPlanInput
 ): Promise<GenerateDailyStudyPlanOutput | { error: string }> {
@@ -47,6 +63,10 @@ export async function handleGenerateDailyStudyPlan(
     const result = await generateDailyStudyPlan(input);
     if (!result) {
       return { error: 'AI failed to generate a daily study plan.' };
+    }
+    // Type narrowing
+    if ('error' in result) {
+      return result;
     }
     return result;
   } catch (error) {
@@ -63,6 +83,7 @@ export async function handleGenerateDailyStudyPlan(
   }
 }
 
+// Server action to save user goals
 export async function handleSaveGoals(userId: string, goals: ClientGoal[]): Promise<{ success: boolean; error?: string }> {
     try {
         await saveGoals(userId, goals);
@@ -74,32 +95,15 @@ export async function handleSaveGoals(userId: string, goals: ClientGoal[]): Prom
     }
 }
 
+// Server action to retrieve user goals
 export async function handleGetGoals(userId: string): Promise<ClientGoal[] | { error: string }> {
     try {
-        return await getGoalsForUser(userId);
+        const goals = await getGoalsForUser(userId);
+        // Assuming getGoalsForUser returns ClientGoal[] or throws an error
+        return goals;
     } catch(error) {
         console.error('Error getting goals:', error);
         const errorMessage = error instanceof Error ? error.message : 'Could not retrieve your saved goals.';
         return { error: errorMessage };
     }
 }
-=======
-export async function handleGenerateSchedule(input: GenerateStudyScheduleInput): Promise<GenerateStudyScheduleOutput> {
-  try {
-    const result = await generateStudySchedule(input);
-    if (!result || !result.schedule) {
-      throw new Error('AI failed to generate a schedule.');
-    }
-    return result;
-  } catch (error) {
-    console.error('Error generating schedule:', error);
-    if (error instanceof Error) {
-        if (error.message.includes('503')) {
-            throw new Error('The AI model is temporarily overloaded. Please wait a moment and try again.');
-        }
-        throw new Error(`Failed to generate schedule: ${error.message}`);
-    }
-    throw new Error('An unknown error occurred while generating the schedule.');
-  }
-}
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0

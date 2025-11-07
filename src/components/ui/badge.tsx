@@ -15,6 +15,8 @@ const badgeVariants = cva(
         destructive:
           "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
         outline: "text-foreground",
+        // --- CRITICAL CORRECTION: ADD THE 'success' VARIANT HERE ---
+        success: "border-transparent bg-green-500 text-white shadow-sm hover:bg-green-600", // Example styling for a success badge
       },
     },
     defaultVariants: {

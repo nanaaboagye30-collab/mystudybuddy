@@ -1,11 +1,16 @@
-
 'use server';
 
 import {
   generateNotesFromPdf,
   type GenerateNotesFromPdfInput,
-  type GenerateStudyNotesOutput,
+  // --- CORRECTION START ---
+  // Remove 'type GenerateStudyNotesOutput' from this import, as it's no longer exported from here.
 } from '@/ai/flows/generate-notes-from-pdf';
+
+// Add a new, separate import for GenerateStudyNotesOutput directly from its source.
+import { type GenerateStudyNotesOutput } from '@/ai/flows/schemas';
+// --- CORRECTION END ---
+
 
 export async function handleGenerateNotesFromPdf(
   input: GenerateNotesFromPdfInput

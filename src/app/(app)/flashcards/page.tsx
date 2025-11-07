@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 
 'use client';
 
@@ -230,29 +229,6 @@ export default function FlashcardsPage() {
           -webkit-backface-visibility: hidden;
         }
       `}</style>
-=======
-'use client';
-
-import { useState } from 'react';
-import type { GenerateFlashcardsFromTextOutput } from '@/ai/flows/generate-flashcards-from-text';
-import { FlashcardGenerator } from '@/components/flashcard-generator';
-import { FlashcardViewer } from '@/components/flashcard-viewer';
-
-export default function FlashcardsPage() {
-  const [flashcardData, setFlashcardData] = useState<GenerateFlashcardsFromTextOutput | null>(null);
-
-  const handleRestart = () => {
-    setFlashcardData(null);
-  };
-
-  return (
-    <div className="container mx-auto py-6">
-      {flashcardData ? (
-        <FlashcardViewer data={flashcardData} onRestart={handleRestart} />
-      ) : (
-        <FlashcardGenerator onFlashcardsGenerated={setFlashcardData} />
-      )}
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
     </div>
   );
 }

@@ -1,418 +1,214 @@
-<<<<<<< HEAD
+// src/app/(app)/quiz/page.tsx
+'use client'; // This must be at the top of client components
 
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Sparkles, Check, X, FileQuestion, ThumbsUp, ThumbsDown, Save } from 'lucide-react';
+
+// --- CRITICAL CORRECTION: Import QuizGenerator with an alias ---
+import { QuizGenerator as QuizFormComponent } from '@/components/quiz-generator'; // <--- Renamed the import here
+
 import { handleGenerateQuiz, handleSaveQuiz } from './actions';
 import {
   type GenerateQuizOutput,
   type GenerateQuizInput,
+  type GenerateQuizSuccessOutput,
+  type QuizQuestion as BaseQuizQuestion
 } from '@/ai/flows/generate-quiz-from-uploaded-text';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/use-auth';
 
-type QuizQuestion = GenerateQuizOutput['quiz'][0];
+type QuizQuestion = BaseQuizQuestion;
 type AnswerState = 'unanswered' | 'correct' | 'incorrect';
 
 export default function QuizPage() {
-  const [topic, setTopic] = useState('');
-  const [text, setText] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [quizResult, setQuizResult] = useState<GenerateQuizOutput | null>(
-    null
-  );
   const { toast } = useToast();
   const { user } = useAuth();
 
-  // Quiz state
+  const [quizInput, setQuizInput] = useState<GenerateQuizInput | null>(null);
+  const [generatedQuiz, setGeneratedQuiz] = useState<GenerateQuizSuccessOutput | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [selectedAnswers, setSelectedAnswers] = useState<
-    Record<number, string>
-  >({});
-  const [answerStates, setAnswerStates] = useState<Record<number, AnswerState>>(
-    {}
-  );
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [answerState, setAnswerState] = useState<AnswerState>('unanswered');
   const [score, setScore] = useState(0);
-  const [isQuizFinished, setIsQuizFinished] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [quizFinished, setQuizFinished] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
+  const currentQuestion: QuizQuestion | undefined = generatedQuiz?.quiz[currentQuestionIndex];
+  const totalQuestions = generatedQuiz?.quiz.length || 0;
+  const progress = totalQuestions > 0 ? (((currentQuestionIndex + 1) / totalQuestions) * 100) : 0;
 
-  // Quiz settings
-  const [difficulty, setDifficulty] =
-    useState<GenerateQuizInput['difficulty']>('medium');
-  const [numberOfQuestions, setNumberOfQuestions] =
-    useState<GenerateQuizInput['numberOfQuestions']>(5);
-
-  const handleGenerate = async () => {
-    if (text.trim().length < 100) {
-        toast({
-            title: 'Text is too short',
-            description: 'Please provide at least 100 characters to generate a quiz from.',
-            variant: 'destructive'
-        });
-        return;
-    }
-    
-    setIsLoading(true);
-    setQuizResult(null);
-    resetQuizState();
-
-    try {
-      const result = await handleGenerateQuiz({
-        text,
-        difficulty,
-        numberOfQuestions,
-      });
-
-      if ('error' in result) {
-         toast({
-            title: 'Generation Failed',
-            description: result.error,
-            variant: 'destructive',
-        });
-      } else {
-        setQuizResult(result);
-        toast({
-            title: 'Quiz Generated!',
-            description: 'Your quiz is ready to be taken.',
-        });
-      }
-    } catch (error) {
-      console.error(error);
-      toast({
-        title: 'An Unexpected Error Occurred',
-        description: 'An unknown error occurred while generating the quiz.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const resetQuizState = () => {
+  const handleQuizGenerated = (data: GenerateQuizSuccessOutput, inputData: GenerateQuizInput) => {
+    setGeneratedQuiz(data);
+    setQuizInput(inputData);
     setCurrentQuestionIndex(0);
-    setSelectedAnswers({});
-    setAnswerStates({});
+    setSelectedAnswer(null);
+    setAnswerState('unanswered');
     setScore(0);
-    setIsQuizFinished(false);
-    setIsSaved(false);
-  };
-  
-  const startNewQuiz = () => {
-    setQuizResult(null);
-    resetQuizState();
-  }
-
-  const handleAnswerSelect = (questionIndex: number, answer: string) => {
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [questionIndex]: answer,
-    }));
+    setQuizFinished(false);
   };
 
-  const checkAnswer = () => {
-    if (!quizResult) return;
-    const currentQuestion = quizResult.quiz[currentQuestionIndex];
-    const selectedAnswer = selectedAnswers[currentQuestionIndex];
+  const handleAnswerSubmit = () => {
+    if (!selectedAnswer || !currentQuestion) return;
 
-    if (!selectedAnswer) {
+    if (selectedAnswer === currentQuestion.answer) {
+      setAnswerState('correct');
+      setScore(prev => prev + 1);
+    } else {
+      setAnswerState('incorrect');
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < totalQuestions - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+      setAnswerState('unanswered');
+    } else {
+      setQuizFinished(true);
+    }
+  };
+
+  const handleSaveQuizToProfile = async () => {
+    if (!user || !generatedQuiz) {
       toast({
-        title: 'No answer selected',
-        description: 'Please select an answer before checking.',
-        variant: 'destructive',
+        title: "Authentication Required",
+        description: "Please sign in to save your quiz.",
+        variant: "destructive",
       });
       return;
     }
 
-    if (selectedAnswer === currentQuestion.answer) {
-      setAnswerStates((prev) => ({ ...prev, [currentQuestionIndex]: 'correct' }));
-      setScore((prev) => prev + 1);
-    } else {
-      setAnswerStates((prev) => ({
-        ...prev,
-        [currentQuestionIndex]: 'incorrect',
-      }));
-    }
-  };
+    setIsSaving(true);
+    try {
+      const quizToSave = {
+        ...generatedQuiz,
+        userId: user.uid,
+        createdAt: new Date().toISOString(),
+        score: score,
+        totalQuestions: totalQuestions,
+        originalText: quizInput?.text || "N/A",
+        difficulty: quizInput?.difficulty || "N/A"
+      };
 
-  const nextQuestion = () => {
-    if (quizResult && currentQuestionIndex < quizResult.quiz.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1);
-    } else {
-      setIsQuizFinished(true);
-    }
-  };
-  
-  const handleSave = async () => {
-    if (!quizResult || !user) return;
-    
-    const topicToSave = topic || "Untitled Quiz";
+      const result = await handleSaveQuiz(quizToSave);
 
-    setIsSaved(true);
-    const result = await handleSaveQuiz(user.uid, topicToSave, quizResult);
-    
-    if (result.success) {
-         toast({
-            title: 'Quiz Saved!',
-            description: 'You can now find your saved quiz in My Library.',
-        });
-    } else {
+      if (result.success) {
         toast({
-            title: 'Save Failed',
-            description: result.error,
-            variant: 'destructive',
+          title: "Quiz Saved!",
+          description: result.message,
         });
-        setIsSaved(false);
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (error) {
+      console.error("Error saving quiz:", error);
+      toast({
+        title: "Failed to Save Quiz",
+        description: error instanceof Error ? error.message : "An unknown error occurred while saving the quiz.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const currentQuestion: QuizQuestion | null = quizResult ? quizResult.quiz[currentQuestionIndex] : null;
-  const currentAnswerState: AnswerState = answerStates[currentQuestionIndex] || 'unanswered';
-
-
-  if (isLoading) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="font-headline text-xl">Generating Quiz</CardTitle>
-                <CardDescription>The AI is crafting your questions. Please wait...</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <div className="flex items-center justify-center h-64">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                    <p className="ml-4 text-muted-foreground">Analyzing text and creating quiz...</p>
-                </div>
-            </CardContent>
-        </Card>
-    );
-  }
-
-  if (isQuizFinished && quizResult) {
-     const percentage = Math.round((score / quizResult.quiz.length) * 100);
-     const isPassing = percentage >= 70;
-     
-    return (
-        <Card className="text-center">
-            <CardHeader>
-                <CardTitle className="font-headline text-2xl">Quiz Complete!</CardTitle>
-                <CardDescription>Here's how you did.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                 <div className={`mx-auto flex h-24 w-24 items-center justify-center rounded-full ${isPassing ? 'bg-green-100 dark:bg-green-900' : 'bg-red-100 dark:bg-red-900'}`}>
-                    {isPassing ? <ThumbsUp className="h-12 w-12 text-green-600 dark:text-green-400" /> : <ThumbsDown className="h-12 w-12 text-red-600 dark:text-red-400" />}
-                </div>
-                <p className="text-4xl font-bold">{percentage}%</p>
-                <p className="text-muted-foreground">You got <span className="font-bold text-foreground">{score}</span> out of <span className="font-bold text-foreground">{quizResult.quiz.length}</span> questions correct.</p>
-
-                <div className="flex justify-center">
-                    <Button onClick={handleSave} variant="outline" disabled={isSaved}>
-                        <Save className="mr-2 h-4 w-4" />
-                        {isSaved ? 'Saved to Library' : 'Save Quiz to Library'}
-                    </Button>
-                </div>
-                
-                <div className="space-y-2 text-left pt-4">
-                    <h3 className="font-semibold">Review your answers:</h3>
-                     <ul className="space-y-2">
-                        {quizResult.quiz.map((q, index) => (
-                            <li key={index} className="flex items-center justify-between rounded-md border p-3">
-                                <span className="flex-1 mr-4">{q.question}</span>
-                                {selectedAnswers[index] === q.answer ? <Check className="h-5 w-5 text-green-500" /> : <X className="h-5 w-5 text-destructive" />}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className="flex gap-4 pt-6">
-                    <Button onClick={resetQuizState} variant="outline" className="w-full">
-                        Try Again
-                    </Button>
-                     <Button onClick={startNewQuiz} className="w-full">
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        Create New Quiz
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
-    );
-  }
-
-  if (quizResult && currentQuestion) {
-    return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-headline">
-            Quiz Time! (Question {currentQuestionIndex + 1} of{' '}
-            {quizResult.quiz.length})
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="font-semibold text-lg mb-4">{currentQuestion.question}</p>
-          <RadioGroup
-            value={selectedAnswers[currentQuestionIndex] || ''}
-            onValueChange={(value) =>
-              handleAnswerSelect(currentQuestionIndex, value)
-            }
-            disabled={currentAnswerState !== 'unanswered'}
-          >
-            {currentQuestion.options.map((option, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <RadioGroupItem value={option} id={`q${currentQuestionIndex}-o${index}`} />
-                <Label htmlFor={`q${currentQuestionIndex}-o${index}`}>{option}</Label>
-              </div>
-            ))}
-          </RadioGroup>
-          
-          {currentAnswerState !== 'unanswered' && (
-             <Alert className="mt-4" variant={currentAnswerState === 'correct' ? 'default' : 'destructive'}>
-                {currentAnswerState === 'correct' ? <Check className="h-4 w-4" /> : <X className="h-4 w-4" />}
-                <AlertTitle>
-                    {currentAnswerState === 'correct' ? 'Correct!' : 'Incorrect'}
-                </AlertTitle>
-                <AlertDescription>
-                    {currentAnswerState === 'incorrect' && `The correct answer is: ${currentQuestion.answer}`}
-                </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="mt-6 flex justify-end">
-            {currentAnswerState === 'unanswered' ? (
-              <Button onClick={checkAnswer}>Check Answer</Button>
-            ) : (
-              <Button onClick={nextQuestion}>
-                {currentQuestionIndex === quizResult.quiz.length - 1
-                  ? 'Finish Quiz'
-                  : 'Next Question'}
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="font-headline text-xl flex items-center gap-2">
-          <FileQuestion />
-          Generate a Quiz
-        </CardTitle>
-        <CardDescription>
-          Paste your notes or any text below, choose your settings, and the AI
-          will create a multiple-choice quiz for you.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="space-y-2">
-            <Label htmlFor="topic">Topic / Quiz Name (Optional)</Label>
-            <Input
-                id="topic"
-                placeholder="e.g., 'Real Estate Principles Ch. 1'"
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                disabled={isLoading}
-            />
-        </div>
-        <Textarea
-          placeholder="Paste your text here... (minimum 100 characters)"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          rows={10}
-          className="w-full"
-          disabled={isLoading}
-        />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="difficulty">Difficulty</Label>
-            <Select
-              value={difficulty}
-              onValueChange={(val) =>
-                setDifficulty(val as GenerateQuizInput['difficulty'])
-              }
-            >
-              <SelectTrigger id="difficulty">
-                <SelectValue placeholder="Select difficulty" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="easy">Easy</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="hard">Hard</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="num-questions">Number of Questions</Label>
-             <Select
-              value={String(numberOfQuestions)}
-              onValueChange={(val) => setNumberOfQuestions(Number(val))}
-            >
-              <SelectTrigger id="num-questions">
-                <SelectValue placeholder="Select number of questions" />
-              </SelectTrigger>
-              <SelectContent>
-                {[5, 10, 15, 20].map(num => (
-                    <SelectItem key={num} value={String(num)}>{num} Questions</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <Button onClick={handleGenerate} disabled={isLoading || text.trim().length < 100} className="mt-4">
-          {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <Sparkles className="mr-2 h-4 w-4" />
-          )}
-          Generate Quiz
-        </Button>
-      </CardContent>
-    </Card>
-=======
-'use client';
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 text-center font-headline">Quiz Time!</h1>
 
-import { useState } from 'react';
-import type { GenerateQuizOutput } from '@/ai/flows/generate-quiz-from-uploaded-text';
-import { QuizGenerator } from '@/components/quiz-generator';
-import { QuizPlayer } from '@/components/quiz-player';
-
-export default function QuizPage() {
-  const [quizData, setQuizData] = useState<GenerateQuizOutput | null>(null);
-
-  const handleRestart = () => {
-    setQuizData(null);
-  };
-
-  return (
-    <div className="container mx-auto py-6">
-      {quizData ? (
-        <QuizPlayer data={quizData} onRestart={handleRestart} />
+      {generatedQuiz === null ? (
+        // --- CRITICAL CORRECTION: Use the aliased name here ---
+        <QuizFormComponent onQuizGenerated={(data, inputData) => {
+            handleQuizGenerated(data, inputData);
+        }} />
       ) : (
-        <QuizGenerator onQuizGenerated={setQuizData} />
+        <>
+          {quizFinished && generatedQuiz ? (
+            <Card className="max-w-3xl mx-auto mt-8 text-center">
+              <CardHeader>
+                <CardTitle className="text-2xl">Quiz Finished!</CardTitle>
+                <CardDescription>You've completed all questions.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-4xl font-bold mb-4">Your Score: {score} / {totalQuestions}</p>
+                {score / totalQuestions > 0.7 ? (
+                  <ThumbsUp className="h-16 w-16 mx-auto text-green-500" />
+                ) : (
+                  <ThumbsDown className="h-16 w-16 mx-auto text-red-500" />
+                )}
+              </CardContent>
+              <CardFooter className="flex justify-center gap-4">
+                <Button onClick={() => {
+                  setQuizInput(null);
+                  setGeneratedQuiz(null);
+                }}>
+                  Generate New Quiz
+                </Button>
+                {user && (
+                  <Button onClick={handleSaveQuizToProfile} disabled={isSaving}>
+                    {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                    Save Quiz
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
+          ) : (
+            currentQuestion && (
+              <Card className="max-w-3xl mx-auto mt-8">
+                <CardHeader>
+                  <CardTitle className="flex justify-between items-center">
+                    <span>Question {currentQuestionIndex + 1} of {totalQuestions}</span>
+                    <Badge variant={answerState === 'correct' ? 'success' : answerState === 'incorrect' ? 'destructive' : 'secondary'}>
+                      {answerState === 'correct' ? 'Correct!' : answerState === 'incorrect' ? 'Incorrect' : 'Unanswered'}
+                    </Badge>
+                  </CardTitle>
+                  <Progress value={progress} className="mt-2" />
+                </CardHeader>
+                <CardContent>
+                  <p className="text-lg font-semibold mb-4">{currentQuestion.question}</p>
+                  <div className="grid gap-3">
+                    {currentQuestion.options.map((option, index) => (
+                      <Button
+                        key={index}
+                        variant={selectedAnswer === option ? 'default' : 'outline'}
+                        onClick={() => setSelectedAnswer(option)}
+                        disabled={answerState !== 'unanswered'}
+                        className={`justify-start ${
+                          answerState !== 'unanswered' && option === currentQuestion.answer
+                            ? 'border-green-500 bg-green-50'
+                            : answerState === 'incorrect' && selectedAnswer === option
+                            ? 'border-red-500 bg-red-50'
+                            : ''
+                        }`}
+                      >
+                        {option}
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between mt-4">
+                  {answerState === 'unanswered' ? (
+                    <Button onClick={handleAnswerSubmit} disabled={!selectedAnswer}>
+                      Submit Answer
+                    </Button>
+                  ) : (
+                    <Button onClick={handleNextQuestion}>
+                      {currentQuestionIndex < totalQuestions - 1 ? 'Next Question' : 'Finish Quiz'}
+                    </Button>
+                  )}
+                </CardFooter>
+              </Card>
+            )
+          )}
+        </>
       )}
     </div>
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
   );
 }

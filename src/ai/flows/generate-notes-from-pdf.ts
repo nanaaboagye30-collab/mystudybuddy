@@ -1,4 +1,3 @@
-
 'use server';
 /**
  * @fileOverview A note generation AI agent that creates notes from a PDF.
@@ -10,7 +9,11 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+// --- CORRECTION START ---
+// In a 'use server' file, you cannot directly 'export { ... } from ...' for types/schemas.
+// This line should be a standard import.
 import { GenerateStudyNotesOutputSchema, type GenerateStudyNotesOutput } from './schemas';
+// --- CORRECTION END ---
 
 const GenerateNotesFromPdfInputSchema = z.object({
   pdf: z.string().describe("A PDF file encoded as a data URI. Expected format: 'data:application/pdf;base64,<encoded_data>'."),

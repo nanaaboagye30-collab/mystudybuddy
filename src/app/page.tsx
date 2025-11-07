@@ -1,20 +1,13 @@
-<<<<<<< HEAD
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BrainCircuit, MoveRight, FileText, FileQuestion, CalendarDays, BookOpen } from 'lucide-react';
-=======
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BrainCircuit, Copy, FileQuestion, CalendarDays, MoveRight } from 'lucide-react';
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 import Image from 'next/image';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const features = [
   {
-<<<<<<< HEAD
     icon: <BookOpen className="h-8 w-8 text-primary" />,
     title: 'Smarter Note-Taking',
     description: 'Transform articles, PDFs, or your own text into structured, easy-to-digest study notes using AI.',
@@ -32,25 +25,6 @@ const features = [
     description: 'Test your knowledge by generating multiple-choice quizzes from your study materials.',
     image: PlaceHolderImages.find((img) => img.id === 'quiz-feature'),
   },
-=======
-    icon: <Copy className="h-8 w-8 text-primary" />,
-    title: 'Flashcard Generation',
-    description: 'Turn your notes into interactive flashcards with a single click. Our AI finds the key points for you.',
-    image: PlaceHolderImages.find((img) => img.id === 'flashcard-feature'),
-  },
-  {
-    icon: <FileQuestion className="h-8 w-8 text-primary" />,
-    title: 'Quiz Creation',
-    description: 'Challenge yourself with AI-generated quizzes from your study materials. Adjust difficulty to match your learning pace.',
-    image: PlaceHolderImages.find((img) => img.id === 'quiz-feature'),
-  },
-  {
-    icon: <CalendarDays className="h-8 w-8 text-primary" />,
-    title: 'Study Schedules',
-    description: 'Get a personalized study plan based on your exam dates and topics. Stay organized and on track.',
-    image: PlaceHolderImages.find((img) => img.id === 'schedule-feature'),
-  },
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
 ];
 
 const heroImage = PlaceHolderImages.find((img) => img.id === 'hero-image');
@@ -76,19 +50,11 @@ export default function Home() {
             Supercharge Your Studies with AI
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-<<<<<<< HEAD
             The all-in-one platform to generate notes, flashcards, and quizzes from any text. Study smarter, not harder.
           </p>
           <Button size="lg" asChild>
             <Link href="/dashboard">
               Go To Dashboard <MoveRight className="ml-2 h-5 w-5" />
-=======
-            Effortlessly create flashcards, quizzes, and personalized study schedules from your notes. Focus on learning, not preparing.
-          </p>
-          <Button size="lg" asChild>
-            <Link href="/dashboard">
-              Start Studying Now <MoveRight className="ml-2 h-5 w-5" />
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
             </Link>
           </Button>
         </section>
@@ -113,11 +79,7 @@ export default function Home() {
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold font-headline">Everything You Need to Succeed</h2>
               <p className="text-md md:text-lg text-muted-foreground mt-2">
-<<<<<<< HEAD
                 Our AI-powered tools are designed to make your learning more effective.
-=======
-                Our AI-powered tools are designed to make your study sessions more effective.
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
