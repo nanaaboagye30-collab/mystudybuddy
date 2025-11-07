@@ -2,15 +2,12 @@ import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
   /* config options here */
-<<<<<<< HEAD
-=======
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
   },
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
   images: {
     remotePatterns: [
       {
@@ -26,11 +23,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-<<<<<<< HEAD
-        protocol: 'https' ,
-=======
-        protocol: 'https',
->>>>>>> cb4c034c204ea3197443d50d39cc11865d10f9d0
+        protocol: 'https', // Consolidated to one version
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
@@ -40,3 +33,5 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+  
