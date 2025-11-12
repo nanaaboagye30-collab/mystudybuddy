@@ -1,3 +1,9 @@
+# Updated apphosting.yaml for Gemini API Key secret reference
+# Settings to manage and configure a Firebase App Hosting backend.
+# https://firebase.google.com/docs/app-hosting/configure
+
+
+# This comment is to force a change
 env:
   - variable: GEMINI_API_KEY
     secret: gemini-api-key
