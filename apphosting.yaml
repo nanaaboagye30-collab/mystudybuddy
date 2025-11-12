@@ -1,9 +1,46 @@
-# Updated apphosting.yaml for Gemini API Key secret reference
 # Settings to manage and configure a Firebase App Hosting backend.
 # https://firebase.google.com/docs/app-hosting/configure
 
+# Specify the build commands and output directory for your application.
+build:
+  # The command to install dependencies (e.g., npm install, yarn install).
+  # If omitted, Firebase App Hosting will try to auto-detect.
+  # installCommand: npm install
 
-# This comment is to force a change
+  # The command to build your application (e.g., npm run build, next build).
+  # This is crucial for Next.js apps.
+  buildCommand: npm run build
+
+  # The directory where your application's static assets are output after building.
+  # For Next.js, this is usually ".next"
+  outputDirectory: .next
+
+# Configure the runtime settings for your application.
+runConfig:
+  # The command to start your application after it's been built.
+  # For Next.js, this is typically "npm start" (which uses "next start).
+  startCommand: npm start
+  # Increase this value if you'd like to automatically spin up
+  # more instances in response to increased traffic.
+  maxInstances: 1
+
+# Environment variables for your application.
 env:
+  # Firebase Admin SDK credentials
+  - variable: FIREBASE_PROJECT_ID
+    value: "studio-2280350664-692c4"
+  - variable: FIREBASE_ADMIN_CLIENT_EMAIL
+    value: "firebase-adminsdk-fbsvc@studio-2280350664-692c4.iam.gserviceaccount.com"
+  # Referencing the private key from Secret Manager for security
+  - variable: FIREBASE_ADMIN_PRIVATE_KEY
+    secret: firebase-admin-private-key # This now points to your secret!
+
+  # Gemini API Key, referenced from Secret Manager
   - variable: GEMINI_API_KEY
-    secret: gemini-api-key
+    secret: gemini-api-key-new # This now points to your new Gemini API key secret!
+
+  # Firebase Web App Config (for client-side or universal rendering)
+  - variable: FIREBASE_CONFIG
+    value: '{"apiKey": "AIzaSyBNlrNFTqc-A7nxC7zIL1gEqznBGjl7Lvw", "authDomain": "studio-2280350664-692c4.firebaseapp.com", "projectId": "studio-2280350664-692c4", "storageBucket": "studio-2280350664-692c4.firebasestorage.app", "messagingSenderId": "1033677824763", "appId": "1:1033677824763:web:dc17b29aaf0dde6666065e"}'
+  - variable: FIREBASE_WEBAPP_CONFIG
+    value: '{"apiKey": "AIzaSyBNlrNFTqc-A7nxC7zIL1gEqznBGjl7Lvw", "authDomain": "studio-2280350664-692c4.firebaseapp.com", "projectId": "studio-2280350664-692c4", "storageBucket": "studio-2280350664-692c4.firebasestorage.app", "messagingSenderId": "1033677824763", "appId": "1:1033677824763:web:dc17b29aaf0dde6666065e"}'
